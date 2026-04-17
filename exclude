@@ -1,0 +1,36 @@
+"""API route handlers for sensitivity calculations.
+
+Exposes an endpoint to calculate effective DPI (eDPI), cm/360, and PSA
+recommendations based on the supplied DPI and sensitivity.  Input
+validation and response models are defined in the schemas package.
+"""
+
+from fastapi import APIRouter
+
+from ...schemas.calculator import SensCalculationRequest, SensCalculationResponse
+from ...services.calculator_service import CalculatorService
+
+
+router = APIRouter()
+
+
+@router.post("/sens", response_model=SensCalculationResponse)
+async def calculate_sensitivity(payload: SensCalculationRequest) -> SensCalculationResponse:
+    """Calculate various sensitivity metrics.
+
+    Args:
+        payload (SensCalculationRequest): Input DPI and sensitivity values.
+
+    Returns:
+        SensCalculationResponse: Calculated metrics including eDPI and cm/360.
+    """
+    result = CalculatorService.calculate(dpi=payload.dpi, sensitivity=payload.sensitivity)
+    return SensCalculationResponse(
+        dpi=result.dpi,
+        sensitivity=result.sensitivity,
+        edpi=result.edpi,
+        cm360=result.cm360,
+        psa_low=result.psa_low,
+        psa_average=result.psa_average,
+        psa_high=result.psa_high,
+    )

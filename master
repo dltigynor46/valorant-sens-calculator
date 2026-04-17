@@ -1,0 +1,20 @@
+"""Health‑check endpoint.
+
+Provides a simple liveness probe for monitoring systems to verify that the
+application is running.  Returns a static response.
+"""
+
+from fastapi import APIRouter
+
+
+router = APIRouter()
+
+
+@router.get("/health")
+async def health_check() -> dict[str, str]:
+    """Return the health status of the service.
+
+    Returns:
+        dict[str, str]: A dictionary with a `status` key set to `ok`.
+    """
+    return {"status": "ok"}
